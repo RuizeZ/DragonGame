@@ -1,9 +1,12 @@
-package DragonGame090621;
+package DragonGame090921;
 
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
+import java.util.Arrays;
 
 import javax.swing.JFrame;
+import javax.swing.plaf.basic.BasicTreeUI.TreeCancelEditingAction;
 
 /**
  * this class set up all the graphics before the game starts
@@ -14,7 +17,7 @@ import javax.swing.JFrame;
 
 public class UI extends JFrame {
 	BufferedImage UIBufferedImage;
-	Graphics UIGraphics;
+	Graphics UIFrameGraphics;
 
 	/**
 	 * initial UI
@@ -25,18 +28,21 @@ public class UI extends JFrame {
 		this.setTitle("Dragon Jump!");
 		this.setLocationRelativeTo(null);
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
-
+		this.setVisible(true);
+		UIFrameGraphics = this.getGraphics();
+		// set Buffer and its graphics
 		UIBufferedImage = new BufferedImage(this.getWidth(), this.getHeight(), BufferedImage.TYPE_INT_RGB);
-		UIGraphics = UIBufferedImage.getGraphics();
-		GraphProcess myGraphProcess = new GraphProcess(UIGraphics);
-		myGraphProcess.loadGraph();
+
+		// start myGraphProcess thread to draw graphs
+		GraphProcess myGraphProcess = new GraphProcess(UIBufferedImage, UIFrameGraphics, this.getWidth(),
+				this.getHeight());
+		myGraphProcess.start();
 		try {
-			Thread.sleep(1000);
+			Thread.sleep(500);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		this.setVisible(true);
 	}
 
 	@Override
