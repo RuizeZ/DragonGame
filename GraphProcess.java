@@ -1,12 +1,10 @@
-package DragonGame090921;
+package DragonGame110221;
 
-import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
+import java.util.Random;
 
-import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 
 /**
  * this class handles all the graph painting
@@ -15,26 +13,22 @@ import javax.imageio.ImageIO;
  *
  */
 public class GraphProcess extends Thread {
-	BufferedImage graphBufferedImage;// store the input file(graph)
 	BufferedImage UIBufferedImage;// bufferedImage for UI
-	Graphics UIBufferGraphics;// graphics for UIBufferedImage
-
-	Graphics UIFrameGraphics;// graphics for the UI
-	int[][] mapPixelArray;
-	int[][] map1PixelArray;
-	int[][] pixelArray = null;
-	String file1 = "DragonGamePic\\map.png";
-	String file2 = "DragonGamePic\\map1.png";
+	Graphics UIBufferedImageGraphics;// graphics for the UI
+	Graphics UIFrameGraphics;
+	String map = "DragonGamePic\\map.png";
+	String map1 = "DragonGamePic\\map1.png";
+	String tree1 = "DragonGamePic\\tree1.png";
+	String tree2 = "DragonGamePic\\tree2.png";
+	Random rand = new Random();
 	int UIWidth, UIHeight;
 
-	public GraphProcess(BufferedImage UIBufferedImage, Graphics UIFrameGraphics, int UIWidth, int UIHeight) {
-		this.UIBufferedImage = UIBufferedImage;
-		this.UIBufferGraphics = this.UIBufferedImage.getGraphics();
-		this.UIFrameGraphics = UIFrameGraphics;
+	public GraphProcess(Graphics UIFrameGraphics, int UIWidth, int UIHeight, BufferedImage UIBufferedImage) {
 		this.UIWidth = UIWidth;
 		this.UIHeight = UIHeight;
-		getPixel(file1);
-		getPixel(file2);
+		this.UIBufferedImage = UIBufferedImage;
+		this.UIBufferedImageGraphics = UIBufferedImage.getGraphics();
+		this.UIFrameGraphics = UIFrameGraphics;
 	}
 
 	public GraphProcess() {
@@ -43,91 +37,66 @@ public class GraphProcess extends Thread {
 
 	@Override
 	public void run() {
-		int move = 1;
-		int count = 0;
+		int move = 0;
 		super.run();
-		loadGraph(0, 0);
-		UIFrameGraphics.drawImage(UIBufferedImage, 0, 0, UIWidth, UIHeight, null);
+		long prevTime = -1000;
+		ImageIcon mapImageIcon = new ImageIcon(map);
+		ImageIcon mapImageIcon1 = new ImageIcon(map1);
+		ImageIcon firstTempMapImageIcon = mapImageIcon;
+		ImageIcon secondTempMapImageIcon = mapImageIcon1;
+
 		while (true) {
-			if (count % 2 == 0) {
-				loadGraph(move, count);
+			if (move != -UIWidth) {
+				UIBufferedImageGraphics.drawImage(firstTempMapImageIcon.getImage(), move, 0, UIWidth, UIHeight, null);
+				UIBufferedImageGraphics.drawImage(secondTempMapImageIcon.getImage(), UIWidth + move, 0, UIWidth,
+						UIHeight, null);
+				move--;
+				/* randomly generate new tree object and put into tree array */
+				int randtree = rand.nextInt(500);
+				if (randtree < 3) {
+					long currTime = System.currentTimeMillis();
+					if (currTime - prevTime > 1000) {
+						Tree newTree = new Tree(UIWidth);
+						Tree.treeArrayList.add(newTree);
+						prevTime = currTime;
+					}
+
+				}
+
+				/*
+				 * draw all the tree in the tree array
+				 */
+				for (int i = 0; i < Tree.treeArrayList.size(); i++) {
+					Tree currTree = Tree.treeArrayList.get(i);
+					UIBufferedImageGraphics.drawImage(currTree.treeImageIcon.getImage(), currTree.currLocationX--,
+							currTree.currLocationY, currTree.treeImageIcon.getIconWidth(),
+							currTree.treeImageIcon.getIconHeight(), null);
+					/*
+					 * remove current tree if it is out of bound l.e. currLocationX < 0
+					 */
+					if (currTree.currLocationX < -30) {
+						Tree.treeArrayList.remove(currTree);
+					}
+				}
 				UIFrameGraphics.drawImage(UIBufferedImage, 0, 0, UIWidth, UIHeight, null);
+				try {
+					Thread.sleep(5);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
 			} else {
-				loadGraph(move, count);
-				UIFrameGraphics.drawImage(UIBufferedImage, 0, 0, UIWidth, UIHeight, null);
-			}
-			move++;
-			if (move == UIWidth) {
-				move = 1;
-				count++;
-			}
-		}
-	}
+				move = 0;
 
-	/**
-	 * paint the map.png before the game starts
-	 */
-	public void loadGraph(int move, int count) {
-		int secStartIndex;
-		if (count % 2 == 0) {
-			pixelArray = mapPixelArray;
-			for (int i = 0; i < pixelArray.length; i++) {
-				for (int j = move; j < pixelArray[0].length; j++) {
-					UIBufferGraphics.setColor(new Color(pixelArray[i][j]));
-					UIBufferGraphics.fillRect(j - move, i, 1, 1);
+				if (firstTempMapImageIcon == mapImageIcon) {
+					firstTempMapImageIcon = mapImageIcon1;
+				} else {
+					firstTempMapImageIcon = mapImageIcon;
 				}
-			}
-			pixelArray = map1PixelArray;
-			for (int i = 0; i < pixelArray.length; i++) {
-				for (int j = 0; j < move; j++) {
-					UIBufferGraphics.setColor(new Color(pixelArray[i][j]));
-					UIBufferGraphics.fillRect(pixelArray[0].length - move + j, i, 1, 1);
+				if (secondTempMapImageIcon == mapImageIcon) {
+					secondTempMapImageIcon = mapImageIcon1;
+				} else {
+					secondTempMapImageIcon = mapImageIcon;
 				}
-			}
-
-		} else {
-			pixelArray = map1PixelArray;
-			for (int i = 0; i < pixelArray.length; i++) {
-				for (int j = move; j < pixelArray[0].length; j++) {
-					UIBufferGraphics.setColor(new Color(pixelArray[i][j]));
-					UIBufferGraphics.fillRect(j - move, i, 1, 1);
-				}
-			}
-			pixelArray = mapPixelArray;
-			for (int i = 0; i < pixelArray.length; i++) {
-				for (int j = 0; j < move; j++) {
-					UIBufferGraphics.setColor(new Color(pixelArray[i][j]));
-					UIBufferGraphics.fillRect(j + pixelArray[0].length - move, i, 1, 1);
-				}
-			}
-		}
-
-	}
-
-	/**
-	 * get pixel from the graph file
-	 */
-	private void getPixel(String fileName) {
-		// read the graph file and store in the buffer
-		File file = new File(fileName);
-		try {
-			graphBufferedImage = ImageIO.read(file);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		int row = graphBufferedImage.getHeight();
-		int column = graphBufferedImage.getWidth();
-		if (fileName == file1) {
-			mapPixelArray = new int[row][column];
-			pixelArray = mapPixelArray;
-		} else if (fileName == file2) {
-			map1PixelArray = new int[row][column];
-			pixelArray = map1PixelArray;
-		}
-		// get RGB from the file and store in the pixelArray
-		for (int i = 0; i < row; i++) {
-			for (int j = 0; j < column; j++) {
-				pixelArray[i][j] = graphBufferedImage.getRGB(j, i);
 			}
 		}
 	}

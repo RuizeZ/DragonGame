@@ -1,12 +1,9 @@
-package DragonGame090921;
+package DragonGame110221;
 
-import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
-import java.util.Arrays;
 
 import javax.swing.JFrame;
-import javax.swing.plaf.basic.BasicTreeUI.TreeCancelEditingAction;
 
 /**
  * this class set up all the graphics before the game starts
@@ -34,8 +31,8 @@ public class UI extends JFrame {
 		UIBufferedImage = new BufferedImage(this.getWidth(), this.getHeight(), BufferedImage.TYPE_INT_RGB);
 
 		// start myGraphProcess thread to draw graphs
-		GraphProcess myGraphProcess = new GraphProcess(UIBufferedImage, UIFrameGraphics, this.getWidth(),
-				this.getHeight());
+		GraphProcess myGraphProcess = new GraphProcess(UIFrameGraphics, this.getWidth(), this.getHeight(),
+				UIBufferedImage);
 		myGraphProcess.start();
 		try {
 			Thread.sleep(500);
@@ -48,7 +45,7 @@ public class UI extends JFrame {
 	@Override
 	public void paint(Graphics g) {
 		super.paint(g);
-		g.drawImage(UIBufferedImage, 0, 0, this.getWidth(), this.getHeight(), null);
+//		g.drawImage(UIBufferedImage, 0, 0, this.getWidth(), this.getHeight(), null);
 	}
 
 	public static void main(String[] args) {
