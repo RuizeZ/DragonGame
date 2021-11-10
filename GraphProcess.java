@@ -1,4 +1,4 @@
-package DragonGame110221;
+package DragonGame110921;
 
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
@@ -20,8 +20,11 @@ public class GraphProcess extends Thread {
 	String map1 = "DragonGamePic\\map1.png";
 	String tree1 = "DragonGamePic\\tree1.png";
 	String tree2 = "DragonGamePic\\tree2.png";
+	String dragon1 = "DragonGamePic\\dragon1.png";
+	String dragon2 = "DragonGamePic\\dragon2.png";
 	Random rand = new Random();
 	int UIWidth, UIHeight;
+	int dragonCount = 1;
 
 	public GraphProcess(Graphics UIFrameGraphics, int UIWidth, int UIHeight, BufferedImage UIBufferedImage) {
 		this.UIWidth = UIWidth;
@@ -42,14 +45,20 @@ public class GraphProcess extends Thread {
 		long prevTime = -1000;
 		ImageIcon mapImageIcon = new ImageIcon(map);
 		ImageIcon mapImageIcon1 = new ImageIcon(map1);
+		ImageIcon dragon1ImageIcon = new ImageIcon(dragon1);
+		ImageIcon dragon2ImageIcon = new ImageIcon(dragon2);
 		ImageIcon firstTempMapImageIcon = mapImageIcon;
 		ImageIcon secondTempMapImageIcon = mapImageIcon1;
+		ImageIcon currentDragonImageIcon = dragon1ImageIcon;
 
 		while (true) {
 			if (move != -UIWidth) {
+
 				UIBufferedImageGraphics.drawImage(firstTempMapImageIcon.getImage(), move, 0, UIWidth, UIHeight, null);
 				UIBufferedImageGraphics.drawImage(secondTempMapImageIcon.getImage(), UIWidth + move, 0, UIWidth,
 						UIHeight, null);
+				UIBufferedImageGraphics.drawImage(currentDragonImageIcon.getImage(), 60, 200,
+						currentDragonImageIcon.getIconWidth(), currentDragonImageIcon.getIconHeight(), null);
 				move--;
 				/* randomly generate new tree object and put into tree array */
 				int randtree = rand.nextInt(500);
@@ -60,7 +69,6 @@ public class GraphProcess extends Thread {
 						Tree.treeArrayList.add(newTree);
 						prevTime = currTime;
 					}
-
 				}
 
 				/*
@@ -79,11 +87,22 @@ public class GraphProcess extends Thread {
 					}
 				}
 				UIFrameGraphics.drawImage(UIBufferedImage, 0, 0, UIWidth, UIHeight, null);
+
+				/* draw dragon alternatively */
+				dragonCount++;
+				if (dragonCount == 20) {
+					dragonCount *= -1;
+					currentDragonImageIcon = dragon2ImageIcon;
+				} else if (dragonCount == 0) {
+					currentDragonImageIcon = dragon1ImageIcon;
+				}
+
 				try {
 					Thread.sleep(5);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
+
 			} else {
 				move = 0;
 
@@ -98,6 +117,7 @@ public class GraphProcess extends Thread {
 					secondTempMapImageIcon = mapImageIcon;
 				}
 			}
+
 		}
 	}
 }

@@ -1,4 +1,4 @@
-package DragonGame110221;
+package DragonGame110921;
 
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
@@ -13,6 +13,10 @@ import javax.swing.JFrame;
  */
 
 public class UI extends JFrame {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	BufferedImage UIBufferedImage;
 	Graphics UIFrameGraphics;
 
