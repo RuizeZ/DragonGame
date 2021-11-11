@@ -1,4 +1,4 @@
-package DragonGame110921;
+package DragonGame111021;
 
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
@@ -57,7 +57,7 @@ public class GraphProcess extends Thread {
 				UIBufferedImageGraphics.drawImage(firstTempMapImageIcon.getImage(), move, 0, UIWidth, UIHeight, null);
 				UIBufferedImageGraphics.drawImage(secondTempMapImageIcon.getImage(), UIWidth + move, 0, UIWidth,
 						UIHeight, null);
-				UIBufferedImageGraphics.drawImage(currentDragonImageIcon.getImage(), 60, 200,
+				UIBufferedImageGraphics.drawImage(currentDragonImageIcon.getImage(), (int)Dragon.currX, (int)Dragon.currY,
 						currentDragonImageIcon.getIconWidth(), currentDragonImageIcon.getIconHeight(), null);
 				move--;
 				/* randomly generate new tree object and put into tree array */
@@ -88,13 +88,19 @@ public class GraphProcess extends Thread {
 				}
 				UIFrameGraphics.drawImage(UIBufferedImage, 0, 0, UIWidth, UIHeight, null);
 
-				/* draw dragon alternatively */
-				dragonCount++;
-				if (dragonCount == 20) {
-					dragonCount *= -1;
-					currentDragonImageIcon = dragon2ImageIcon;
-				} else if (dragonCount == 0) {
-					currentDragonImageIcon = dragon1ImageIcon;
+				if (!Dragon.isJumping) {
+					/* draw dragon alternatively */
+					dragonCount++;
+					if (dragonCount == 20) {
+						dragonCount *= -1;
+						currentDragonImageIcon = dragon2ImageIcon;
+					} else if (dragonCount == 0) {
+						currentDragonImageIcon = dragon1ImageIcon;
+					}
+				} else {
+					
+					/*set X and Y of the dragon, make the jump*/
+					Dragon.getY();
 				}
 
 				try {

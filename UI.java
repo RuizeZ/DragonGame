@@ -1,8 +1,7 @@
-package DragonGame110921;
+package DragonGame111021;
 
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
-
 import javax.swing.JFrame;
 
 /**
@@ -38,12 +37,8 @@ public class UI extends JFrame {
 		GraphProcess myGraphProcess = new GraphProcess(UIFrameGraphics, this.getWidth(), this.getHeight(),
 				UIBufferedImage);
 		myGraphProcess.start();
-		try {
-			Thread.sleep(500);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		KeyboardControl keyboard = new KeyboardControl();
+		this.addKeyListener(keyboard);
 	}
 
 	@Override
