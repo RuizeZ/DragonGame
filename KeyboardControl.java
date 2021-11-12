@@ -1,4 +1,4 @@
-package DragonGame111021;
+package DragonGame111121;
 
 import java.awt.event.*;
 
@@ -28,7 +28,7 @@ public class KeyboardControl implements KeyListener, ActionListener {
 			/*
 			 * press space, make dragon jump
 			 */
-			System.out.println("jump");
+//			System.out.println("jump");
 			Dragon.pressSpace();
 		}
 

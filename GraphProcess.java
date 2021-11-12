@@ -1,4 +1,4 @@
-package DragonGame111021;
+package DragonGame111121;
 
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
@@ -22,9 +22,11 @@ public class GraphProcess extends Thread {
 	String tree2 = "DragonGamePic\\tree2.png";
 	String dragon1 = "DragonGamePic\\dragon1.png";
 	String dragon2 = "DragonGamePic\\dragon2.png";
+	String dragon3 = "DragonGamePic\\dragon3.png";
 	Random rand = new Random();
 	int UIWidth, UIHeight;
 	int dragonCount = 1;
+	boolean isCollision = false;
 
 	public GraphProcess(Graphics UIFrameGraphics, int UIWidth, int UIHeight, BufferedImage UIBufferedImage) {
 		this.UIWidth = UIWidth;
@@ -50,6 +52,7 @@ public class GraphProcess extends Thread {
 		ImageIcon firstTempMapImageIcon = mapImageIcon;
 		ImageIcon secondTempMapImageIcon = mapImageIcon1;
 		ImageIcon currentDragonImageIcon = dragon1ImageIcon;
+		ImageIcon dragon3ImageIcon = new ImageIcon(dragon3);
 
 		while (true) {
 			if (move != -UIWidth) {
@@ -57,8 +60,9 @@ public class GraphProcess extends Thread {
 				UIBufferedImageGraphics.drawImage(firstTempMapImageIcon.getImage(), move, 0, UIWidth, UIHeight, null);
 				UIBufferedImageGraphics.drawImage(secondTempMapImageIcon.getImage(), UIWidth + move, 0, UIWidth,
 						UIHeight, null);
-				UIBufferedImageGraphics.drawImage(currentDragonImageIcon.getImage(), (int)Dragon.currX, (int)Dragon.currY,
-						currentDragonImageIcon.getIconWidth(), currentDragonImageIcon.getIconHeight(), null);
+				UIBufferedImageGraphics.drawImage(currentDragonImageIcon.getImage(), (int) Dragon.currX,
+						(int) Dragon.currY, currentDragonImageIcon.getIconWidth(),
+						currentDragonImageIcon.getIconHeight(), null);
 				move--;
 				/* randomly generate new tree object and put into tree array */
 				int randtree = rand.nextInt(500);
@@ -79,6 +83,20 @@ public class GraphProcess extends Thread {
 					UIBufferedImageGraphics.drawImage(currTree.treeImageIcon.getImage(), currTree.currLocationX--,
 							currTree.currLocationY, currTree.treeImageIcon.getIconWidth(),
 							currTree.treeImageIcon.getIconHeight(), null);
+
+					/* check for collision */
+					if (currTree.currLocationX + 20 <= Dragon.currX + currentDragonImageIcon.getIconWidth()
+							&& currTree.currLocationX + currTree.treeImageIcon.getIconWidth() - 5 >= Dragon.currX) {
+//						System.out.println("collision check");
+						Dragon.getDragonArea();
+						if (Dragon.YEnd - 10 >= currTree.currLocationY) {
+							UIBufferedImageGraphics.drawImage(dragon3ImageIcon.getImage(), (int) Dragon.currX,
+									(int) Dragon.currY, currentDragonImageIcon.getIconWidth(),
+									currentDragonImageIcon.getIconHeight(), null);
+							isCollision = true;
+						}
+					}
+
 					/*
 					 * remove current tree if it is out of bound l.e. currLocationX < 0
 					 */
@@ -87,7 +105,9 @@ public class GraphProcess extends Thread {
 					}
 				}
 				UIFrameGraphics.drawImage(UIBufferedImage, 0, 0, UIWidth, UIHeight, null);
-
+				if (isCollision) {
+					return;
+				}
 				if (!Dragon.isJumping) {
 					/* draw dragon alternatively */
 					dragonCount++;
@@ -98,8 +118,8 @@ public class GraphProcess extends Thread {
 						currentDragonImageIcon = dragon1ImageIcon;
 					}
 				} else {
-					
-					/*set X and Y of the dragon, make the jump*/
+
+					/* set X and Y of the dragon, make the jump */
 					Dragon.getY();
 				}
 
