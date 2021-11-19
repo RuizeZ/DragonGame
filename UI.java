@@ -1,8 +1,12 @@
 package DragonGame111121;
 
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 
 /**
  * this class set up all the graphics before the game starts
@@ -18,6 +22,7 @@ public class UI extends JFrame {
 	private static final long serialVersionUID = 1L;
 	BufferedImage UIBufferedImage;
 	Graphics UIFrameGraphics;
+	JLabel timeLabel;
 
 	/**
 	 * initial UI
@@ -28,17 +33,26 @@ public class UI extends JFrame {
 		this.setTitle("Dragon Jump!");
 		this.setLocationRelativeTo(null);
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+		timeLabel = new JLabel("Your time left:  ");
+		timeLabel.setFont(new Font("Arial", Font.PLAIN, 20));
 		this.setVisible(true);
-		UIFrameGraphics = this.getGraphics();
-		// set Buffer and its graphics
-		UIBufferedImage = new BufferedImage(this.getWidth(), this.getHeight(), BufferedImage.TYPE_INT_RGB);
+		newGame();
+	}
 
-		// start myGraphProcess thread to draw graphs
-		GraphProcess myGraphProcess = new GraphProcess(UIFrameGraphics, this.getWidth(), this.getHeight(),
+	// start myGraphProcess thread to draw graphs
+	public void newGame() {
+		// set Buffer and its graphics
+		Dragon myDragon = new Dragon();
+		UIFrameGraphics = this.getGraphics();
+		UIBufferedImage = new BufferedImage(this.getWidth(), this.getHeight(), BufferedImage.TYPE_INT_RGB);
+		GraphProcess myGraphProcess = new GraphProcess(myDragon, UIFrameGraphics, this.getWidth(), this.getHeight(),
 				UIBufferedImage);
-		myGraphProcess.start();
-		KeyboardControl keyboard = new KeyboardControl();
+		KeyboardControl keyboard = new KeyboardControl(myDragon);
+		MouseControl mouse = new MouseControl(this);
+		this.addMouseListener(mouse);
 		this.addKeyListener(keyboard);
+		Tree.treeArrayList = new ArrayList<>();
+		myGraphProcess.start();
 	}
 
 	@Override

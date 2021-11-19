@@ -6,14 +6,14 @@ import javax.swing.ImageIcon;
  * record all the status of the dragon
  */
 public class Dragon {
-	static boolean isJumping = false;
-	static int currX = 60;
-	static int XEnd = 0;
-	static double currY = 200;
-	static int YEnd = 0;
-	static boolean goUp = true;
-	static String dragon1 = "DragonGamePic\\dragon1.png";
-	static ImageIcon dragon1ImageIcon = new ImageIcon(dragon1);
+	boolean isJumping = false;
+	int currX = 60;
+	int XEnd = 0;
+	double currY = 200;
+	int YEnd = 0;
+	boolean goUp = true;
+	String dragon1 = "DragonGamePic\\dragon1.png";
+	ImageIcon dragon1ImageIcon = new ImageIcon(dragon1);
 
 	public Dragon() {
 		// TODO Auto-generated constructor stub
@@ -22,14 +22,14 @@ public class Dragon {
 	/*
 	 * if the dragon is not jumping, set isJumping to true
 	 */
-	public static void pressSpace() {
+	public void pressSpace() {
 		if (isJumping == false) {
 			isJumping = true;
 		}
 	}
 
 	/* change the y to make the jump */
-	public static void getY() {
+	public void getY() {
 		if (isJumping) {
 			/* going up, y is decreasing */
 			if (currY > 100 && goUp) {
@@ -42,7 +42,7 @@ public class Dragon {
 				/* going down, y is increasing */
 				goUp = false;
 				if (currY < 175) {
-					currY += 1;
+					currY += 1.5;
 				} else if (currY < 200) {
 					currY += 2;
 				}
@@ -56,7 +56,7 @@ public class Dragon {
 	}
 
 	/* calculate the area for detecting collision with tree */
-	public static void getDragonArea() {
+	public void getDragonArea() {
 		XEnd = currX + dragon1ImageIcon.getIconWidth();
 		YEnd = (int) currY + dragon1ImageIcon.getIconHeight();
 	}

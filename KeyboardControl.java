@@ -3,6 +3,11 @@ package DragonGame111121;
 import java.awt.event.*;
 
 public class KeyboardControl implements KeyListener, ActionListener {
+	Dragon myDragon;
+	public KeyboardControl(Dragon myDragon) {
+		// TODO Auto-generated constructor stub
+		this.myDragon = myDragon;
+	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
@@ -29,7 +34,7 @@ public class KeyboardControl implements KeyListener, ActionListener {
 			 * press space, make dragon jump
 			 */
 //			System.out.println("jump");
-			Dragon.pressSpace();
+			myDragon.pressSpace();
 		}
 
 	}

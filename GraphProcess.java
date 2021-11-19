@@ -16,6 +16,7 @@ public class GraphProcess extends Thread {
 	BufferedImage UIBufferedImage;// bufferedImage for UI
 	Graphics UIBufferedImageGraphics;// graphics for the UI
 	Graphics UIFrameGraphics;
+	Dragon myDragon;
 	String map = "DragonGamePic\\map.png";
 	String map1 = "DragonGamePic\\map1.png";
 	String tree1 = "DragonGamePic\\tree1.png";
@@ -23,17 +24,19 @@ public class GraphProcess extends Thread {
 	String dragon1 = "DragonGamePic\\dragon1.png";
 	String dragon2 = "DragonGamePic\\dragon2.png";
 	String dragon3 = "DragonGamePic\\dragon3.png";
+	String gameOver = "DragonGamePic\\gameover.png";
 	Random rand = new Random();
 	int UIWidth, UIHeight;
 	int dragonCount = 1;
-	boolean isCollision = false;
+	static boolean isCollision = false;
 
-	public GraphProcess(Graphics UIFrameGraphics, int UIWidth, int UIHeight, BufferedImage UIBufferedImage) {
+	public GraphProcess(Dragon myDragon, Graphics UIFrameGraphics, int UIWidth, int UIHeight, BufferedImage UIBufferedImage) {
 		this.UIWidth = UIWidth;
 		this.UIHeight = UIHeight;
 		this.UIBufferedImage = UIBufferedImage;
 		this.UIBufferedImageGraphics = UIBufferedImage.getGraphics();
 		this.UIFrameGraphics = UIFrameGraphics;
+		this.myDragon = myDragon;
 	}
 
 	public GraphProcess() {
@@ -53,6 +56,7 @@ public class GraphProcess extends Thread {
 		ImageIcon secondTempMapImageIcon = mapImageIcon1;
 		ImageIcon currentDragonImageIcon = dragon1ImageIcon;
 		ImageIcon dragon3ImageIcon = new ImageIcon(dragon3);
+		ImageIcon gameOverImageIcon = new ImageIcon(gameOver);
 
 		while (true) {
 			if (move != -UIWidth) {
@@ -60,8 +64,8 @@ public class GraphProcess extends Thread {
 				UIBufferedImageGraphics.drawImage(firstTempMapImageIcon.getImage(), move, 0, UIWidth, UIHeight, null);
 				UIBufferedImageGraphics.drawImage(secondTempMapImageIcon.getImage(), UIWidth + move, 0, UIWidth,
 						UIHeight, null);
-				UIBufferedImageGraphics.drawImage(currentDragonImageIcon.getImage(), (int) Dragon.currX,
-						(int) Dragon.currY, currentDragonImageIcon.getIconWidth(),
+				UIBufferedImageGraphics.drawImage(currentDragonImageIcon.getImage(), (int) myDragon.currX,
+						(int) myDragon.currY, currentDragonImageIcon.getIconWidth(),
 						currentDragonImageIcon.getIconHeight(), null);
 				move--;
 				/* randomly generate new tree object and put into tree array */
@@ -85,14 +89,18 @@ public class GraphProcess extends Thread {
 							currTree.treeImageIcon.getIconHeight(), null);
 
 					/* check for collision */
-					if (currTree.currLocationX + 20 <= Dragon.currX + currentDragonImageIcon.getIconWidth()
-							&& currTree.currLocationX + currTree.treeImageIcon.getIconWidth() - 5 >= Dragon.currX) {
+					if (currTree.currLocationX + 20 <= myDragon.currX + currentDragonImageIcon.getIconWidth()
+							&& currTree.currLocationX + currTree.treeImageIcon.getIconWidth() - 5 >= myDragon.currX) {
 //						System.out.println("collision check");
-						Dragon.getDragonArea();
-						if (Dragon.YEnd - 10 >= currTree.currLocationY) {
-							UIBufferedImageGraphics.drawImage(dragon3ImageIcon.getImage(), (int) Dragon.currX,
-									(int) Dragon.currY, currentDragonImageIcon.getIconWidth(),
+						myDragon.getDragonArea();
+						if (myDragon.YEnd - 10 >= currTree.currLocationY) {
+							/* game over */
+							/* draw dead dragon */
+							UIBufferedImageGraphics.drawImage(dragon3ImageIcon.getImage(), (int) myDragon.currX,
+									(int) myDragon.currY, currentDragonImageIcon.getIconWidth(),
 									currentDragonImageIcon.getIconHeight(), null);
+							UIBufferedImageGraphics.drawImage(gameOverImageIcon.getImage(), 734 / 3, 286 / 4,
+									gameOverImageIcon.getIconWidth(), gameOverImageIcon.getIconHeight(), null);
 							isCollision = true;
 						}
 					}
@@ -106,12 +114,13 @@ public class GraphProcess extends Thread {
 				}
 				UIFrameGraphics.drawImage(UIBufferedImage, 0, 0, UIWidth, UIHeight, null);
 				if (isCollision) {
+					
 					return;
 				}
-				if (!Dragon.isJumping) {
+				if (!myDragon.isJumping) {
 					/* draw dragon alternatively */
 					dragonCount++;
-					if (dragonCount == 20) {
+					if (dragonCount == 15) {
 						dragonCount *= -1;
 						currentDragonImageIcon = dragon2ImageIcon;
 					} else if (dragonCount == 0) {
@@ -120,11 +129,11 @@ public class GraphProcess extends Thread {
 				} else {
 
 					/* set X and Y of the dragon, make the jump */
-					Dragon.getY();
+					myDragon.getY();
 				}
 
 				try {
-					Thread.sleep(5);
+					Thread.sleep(3);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
