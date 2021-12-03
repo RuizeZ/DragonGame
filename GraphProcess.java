@@ -1,10 +1,11 @@
-package DragonGame111121;
+package DragonGame;
 
-import java.awt.Graphics;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.Random;
 
 import javax.swing.ImageIcon;
+import javax.swing.text.AttributeSet.ColorAttribute;
 
 /**
  * this class handles all the graph painting
@@ -30,7 +31,8 @@ public class GraphProcess extends Thread {
 	int dragonCount = 1;
 	static boolean isCollision = false;
 
-	public GraphProcess(Dragon myDragon, Graphics UIFrameGraphics, int UIWidth, int UIHeight, BufferedImage UIBufferedImage) {
+	public GraphProcess(Dragon myDragon, Graphics UIFrameGraphics, int UIWidth, int UIHeight,
+			BufferedImage UIBufferedImage) {
 		this.UIWidth = UIWidth;
 		this.UIHeight = UIHeight;
 		this.UIBufferedImage = UIBufferedImage;
@@ -57,10 +59,9 @@ public class GraphProcess extends Thread {
 		ImageIcon currentDragonImageIcon = dragon1ImageIcon;
 		ImageIcon dragon3ImageIcon = new ImageIcon(dragon3);
 		ImageIcon gameOverImageIcon = new ImageIcon(gameOver);
-
+		int count = 0, score = 0;
 		while (true) {
 			if (move != -UIWidth) {
-
 				UIBufferedImageGraphics.drawImage(firstTempMapImageIcon.getImage(), move, 0, UIWidth, UIHeight, null);
 				UIBufferedImageGraphics.drawImage(secondTempMapImageIcon.getImage(), UIWidth + move, 0, UIWidth,
 						UIHeight, null);
@@ -110,11 +111,22 @@ public class GraphProcess extends Thread {
 					 */
 					if (currTree.currLocationX < -30) {
 						Tree.treeArrayList.remove(currTree);
+						score += 5;
 					}
 				}
+				count++;
+				UIBufferedImageGraphics.setColor(Color.BLACK);
+				UIBufferedImageGraphics
+						.setFont(new Font(UIBufferedImageGraphics.getFont().getFontName(), Font.PLAIN, 15));
+				if (count == 200) {
+					UIBufferedImageGraphics.drawString(String.valueOf(score++), UIWidth - 80, 70);
+					count = 0;
+				} else {
+					UIBufferedImageGraphics.drawString(String.valueOf(score), UIWidth - 80, 70);
+				}
+
 				UIFrameGraphics.drawImage(UIBufferedImage, 0, 0, UIWidth, UIHeight, null);
 				if (isCollision) {
-					
 					return;
 				}
 				if (!myDragon.isJumping) {

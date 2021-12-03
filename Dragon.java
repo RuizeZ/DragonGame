@@ -1,4 +1,4 @@
-package DragonGame111121;
+package DragonGame;
 
 import javax.swing.ImageIcon;
 
